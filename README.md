@@ -1,3 +1,4 @@
+
 # TaskFlow
 Task management application in dotnet core
 
@@ -7,3 +8,5 @@ dotnet run
 ```
 
 Runs at http://localhost:5104/
+
+![TaskFlow management app](Picture.jpg)
