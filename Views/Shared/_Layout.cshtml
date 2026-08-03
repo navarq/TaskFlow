@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <nav class="container nav-shell">
+            <a asp-controller="Home" asp-action="Index" class="brand">TaskFlow</a>
+            <div class="nav-actions">
+                <a asp-controller="Home" asp-action="Index" class="nav-link">Dashboard</a>
+                <a asp-controller="Home" asp-action="Create" class="nav-link">Create task</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="page-shell">
+        <main class="container">
+            @if (TempData["SuccessMessage"] is string successMessage)
+            {
+                <div class="alert-success">@successMessage</div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <span>&copy; 2026 TaskFlow</span>
+            <span>Built with ASP.NET Core MVC</span>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,116 @@
+@model TaskDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-header">
+    <div>
+        <p class="eyebrow">Operations overview</p>
+        <h1>Team delivery dashboard</h1>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">+ New task</a>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>Total tasks</span>
+        <strong>@Model.TotalTasks</strong>
+    </div>
+    <div class="stat-card">
+        <span>In progress</span>
+        <strong>@Model.InProgressCount</strong>
+    </div>
+    <div class="stat-card">
+        <span>Completed</span>
+        <strong>@Model.CompletedCount</strong>
+    </div>
+    <div class="stat-card">
+        <span>Overdue</span>
+        <strong>@Model.OverdueCount</strong>
+    </div>
+</div>
+
+<div class="panel">
+    <form asp-action="Index" method="get" class="toolbar">
+        <div class="toolbar-field">
+            <label for="search">Search</label>
+            <input id="search" name="search" value="@Model.SearchTerm" class="form-control" placeholder="Title, assignee, keyword" />
+        </div>
+        <div class="toolbar-field">
+            <label for="status">Status</label>
+            <select id="status" name="status" class="form-select">
+                <option value="">All statuses</option>
+                @foreach (var state in Enum.GetValues<TaskState>())
+                {
+                <option value="@state" selected="@(Model.SelectedStatus == state ? "selected" : null)">@state</option>
+                }
+            </select>
+        </div>
+        <div class="toolbar-actions">
+            <button type="submit" class="btn btn-primary">Apply filters</button>
+            <a asp-action="Index" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="panel table-panel">
+    <div class="panel-header">
+        <h2>Task backlog</h2>
+    </div>
+
+    @if (Model.Tasks.Count == 0)
+    {
+        <div class="empty-state">
+            <p>No tasks match the current filters.</p>
+            <a asp-action="Create" class="btn btn-primary">Create one</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Assignee</th>
+                        <th>Due date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var task in Model.Tasks)
+                    {
+                        <tr>
+                            <td>
+                                <div class="task-title">@task.Title</div>
+                                @if (!string.IsNullOrWhiteSpace(task.Description))
+                                {
+                                    <small>@task.Description</small>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge badge-@task.Status.ToString().ToLowerInvariant()">@task.Status</span>
+                            </td>
+                            <td>
+                                <span class="priority priority-@task.Priority.ToString().ToLowerInvariant()">@task.Priority</span>
+                            </td>
+                            <td>@(string.IsNullOrWhiteSpace(task.Assignee) ? "Unassigned" : task.Assignee)</td>
+                            <td>@(task.DueDate.HasValue ? task.DueDate.Value.ToString("MMM dd, yyyy") : "No date")</td>
+                            <td>
+                                <div class="action-group">
+                                    <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-sm btn-secondary">Edit</a>
+                                    <form asp-action="Delete" asp-route-id="@task.Id" method="post" onsubmit="return confirm('Delete this task?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
